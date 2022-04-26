@@ -1,7 +1,5 @@
-import FList.LIST
 from FList import LIST
 from nltk import WordNetLemmatizer
-# Log = Log("FAIR.Language")
 
 lemmatizer = WordNetLemmatizer()
 
@@ -123,8 +121,9 @@ def combine_words(*words):
     return str(words).strip()
 
 # @Ext.safe_args
-def combine_args_str(content: str) -> str:
+def combine_args_str(*content: str) -> str:
     temp = ""
+    content = LIST.flatten(content)
     for item in content:
         temp += " " + str(item)
         print(temp)

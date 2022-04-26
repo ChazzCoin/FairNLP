@@ -1,8 +1,5 @@
 import re
 
-# from Config import tif_tickers
-# from Config.Topic import Topic
-# Log = Log("FAIR.Ticker")
 """
     -> TICKER EXTRACTION
 """

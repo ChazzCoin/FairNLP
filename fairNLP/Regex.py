@@ -1,7 +1,6 @@
 import re
 from FList import LIST
 from FDate import DATE
-# Log = Log("FAIR.Regex")
 
 def remove_special_characters(text):
     """ DEPRECATED """
