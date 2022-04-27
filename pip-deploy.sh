@@ -2,7 +2,7 @@
 
 sudo rm -rf dist
 sudo rm -rf build
-sudo rm -rf FCoRE.egg-info
+sudo rm -rf FairNLP.egg-info
 
 python3 setup.py sdist
 twine upload dist/*
