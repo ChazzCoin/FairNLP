@@ -5,5 +5,8 @@
     <orderEntry type="jdk" jdkName="Python 3.8 (FairSystems)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="FCoRE" />
+    <orderEntry type="module" module-name="FairWeb" />
+    <orderEntry type="module" module-name="pyFongo" />
+    <orderEntry type="module" module-name="Fopics" />
   </component>
 </module>

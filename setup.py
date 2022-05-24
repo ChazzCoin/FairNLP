@@ -12,7 +12,7 @@ setup(
     author_email='chazzcoin@gmail.com',
     license='BSD 2-clause',
     packages=find_packages(),
-    install_requires=['FCoRE>=1.0.2'],
+    install_requires=['FCoRE~=1.0.3'],
     classifiers=[
         'Development Status :: 1 - Planning',
         'Intended Audience :: Science/Research',
