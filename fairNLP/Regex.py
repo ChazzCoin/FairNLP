@@ -1,6 +1,13 @@
 import re
 from FList import LIST
 from FDate import DATE
+import fairResources
+
+STOPWORDS = fairResources.get_stopwords()
+
+"""
+it claims, sentences.. -> r"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s"
+"""
 
 def remove_special_characters(text):
     """ DEPRECATED """
@@ -21,6 +28,23 @@ def contains(search_term, content):
             return False
         else:
             match = re.findall(fr'.*{search_term}.*', content)
+            return True if len(match) >= 1 and match is not None else False
+    except Exception as e:
+        print(f"Failed to regex findall. {search_term}, error=[ {e} ]")
+        return False
+
+def contains_strict(search_term, content):
+    try:
+        if type(content) in [list, tuple]:
+            for itemContent in content:
+                search_term = remove_special_characters(search_term)
+                match = re.findall(fr'\b{search_term}\b', itemContent)
+                if len(match) >= 1 and match is not None:
+                    return True
+            return False
+        else:
+            search_term = remove_special_characters(search_term)
+            match = re.findall(fr'\b{search_term}\b', content)
             return True if len(match) >= 1 and match is not None else False
     except Exception as e:
         print(f"Failed to regex findall. {search_term}, error=[ {e} ]")
@@ -58,7 +82,40 @@ def locate_term_in_str(term, content):
         return match
     return False
 
+def extract_only_capital_words_regex(content):
+    capital_words = re.findall('([A-Z][a-z]+)', content)
+    return capital_words
 
+def extract_only_capital_words_manual(content):
+    previous_char = " "
+    current_index = 0
+    start_index = 0
+    start_enabled = False
+    temp_words = []
+    for char in content:
+        if str(char).isupper() and previous_char == " " and not start_enabled:
+            start_index = current_index
+            start_enabled = True
+        if str(char).islower() and previous_char == " " and start_enabled:
+            end_index = current_index
+            words = content[start_index:end_index-1]
+            temp_words.append(words)
+            start_enabled = False
+        previous_char = char
+        current_index += 1
+    final_words = []
+    for word in temp_words:
+        if word.lower() in STOPWORDS:
+            continue
+        final_words.append(word)
+    return final_words
+
+# if __name__ == '__main__':
+#     testing3 = "Most of these picks seemed to be right in Buffett's wheelhouse. He has become a big fan of energy stocks lately. The large new stake in Occidental Petroleum isn't surprising. Buffett likes the financial services industry. Ally Financial and Citigroup certainly represent the kinds of financial stocks that he's favored in the past."
+#     testing = "Abercrombie & Fitch lost more than 30% in premarket trading, set to become the latest retail stock disaster. The specialty retailer on Tuesday reported an unexpected quarterly loss, despite better-than-expected revenue. Analysts had expected a profit. Freight and product costs weighed on results. Abercrombie also cut its sales outlook for fiscal 2022, anticipating that the current economic headwinds will remain at least through the end of the year."
+#     testing2 = "Snap shares plunged more than 30% in Tuesday’s premarket, the morning after the social media company issued a warning about its upcoming second-quarter results and said it would slow hiring. The Snapchat parent said it’s dealing with a number of issues, including inflation, an uncertain economic environment and Apple’s privacy policy changes."
+#     test = extract_only_capital_words_manual(testing3)
+#     print(test)
 """
 1. March 02 2022
 2. 03/02/2022
@@ -66,6 +123,7 @@ def locate_term_in_str(term, content):
 4. 2022-03-02
 """
 def extract_date(content):
+    """ EXPERIMENTAL AND NOT FINISHED! """
     if type(content) not in [str]:
         content = str(content)
     all = []

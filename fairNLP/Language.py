@@ -1,6 +1,4 @@
 import random
-import re
-
 from FList import LIST
 from FLog.LOGGER import Log
 
@@ -13,15 +11,42 @@ Log = Log("FAIR.Language")
     -> Tokenizing/Splitting Words from a String.
 """
 
+# This one is actually an extremely difficult issue to solve.
 def to_sentences(content: str):
-    content = content.replace("\n", "").strip()
-    s = content.split(". ")
-    newS = remove_empty_strings(s)
-    # finalS = []
-    # for item in newS:
-    #     finalS.append(item + ".")
-    newS = re.findall(r"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s", content)
-    return newS
+    """NOT WORKING!!!"""
+    ENDERS = ['.', '?', '!']
+    content = content.strip().replace("\n", " ").replace("  ", " ")
+    current_index = 0
+    start_index = 0
+    end_index = 0
+    sentences = []
+    for char in content:
+        if char in ENDERS and content[current_index + 1] == ' ':
+            plusTwoChar = str(content[current_index + 2])
+            if plusTwoChar.isupper():
+                sent = content[start_index:end_index]
+                start_index = current_index + 2
+                end_index = current_index
+                # we have a sentence! ..
+                # maybe, this could be a proper Noun
+                pass
+        current_index += 1
+    return sentences
+
+def to_paragraphs(body: str) -> [str]:
+    """ -> Separates text based on "\n" <- """
+    paragraph_list = []
+    i = 0
+    temp_body = body
+    for char in body:
+        if char == "\n":
+            new_body = temp_body[:i]
+            paragraph_list.append(new_body)
+            temp_body = temp_body[i+1:]
+            i = 0
+            continue
+        i += 1
+    return paragraph_list
 
 def to_words_v1(content: str):
     content = replace(content, ".", ",", ";", "\n", "  ")
@@ -199,3 +224,81 @@ def remove_ing(word):
 def remove_apos(word):
     word = word.replace("'", "")
     return word
+
+HAPPY = {
+    ":-)",
+    ":)",
+    ";)",
+    ":o)",
+    ":]",
+    ":3",
+    ":c)",
+    ":>",
+    "=]",
+    "8)",
+    "=)",
+    ":}",
+    ":^)",
+    ":-D",
+    ":D",
+    "8-D",
+    "8D",
+    "x-D",
+    "xD",
+    "X-D",
+    "XD",
+    "=-D",
+    "=D",
+    "=-3",
+    "=3",
+    ":-))",
+    ":'-)",
+    ":')",
+    ":*",
+    ":^*",
+    ">:P",
+    ":-P",
+    ":P",
+    "X-P",
+    "x-p",
+    "xp",
+    "XP",
+    ":-p",
+    ":p",
+    "=p",
+    ":-b",
+    ":b",
+    ">:)",
+    ">;)",
+    ">:-)",
+    "<3",
+}
+
+SAD = {
+    ":L",
+    ":-/",
+    ">:/",
+    ":S",
+    ">:[",
+    ":@",
+    ":-(",
+    ":[",
+    ":-||",
+    "=L",
+    ":<",
+    ":-[",
+    ":-<",
+    "=\\",
+    "=/",
+    ">:(",
+    ":(",
+    ">.<",
+    ":'-(",
+    ":'(",
+    ":\\",
+    ":-c",
+    ":c",
+    ":{",
+    ">:\\",
+    ";(",
+}
