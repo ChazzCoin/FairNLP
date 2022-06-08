@@ -16,6 +16,19 @@ from FList import LIST
     - We then parse the url to find the base site name.
 """
 
+def get_base_url(url):
+    try:
+        url = remove_http(url)
+        last_index = 0
+        for char in url:
+            if str(char) == "/":
+                base = url[:last_index]
+                return base
+            last_index += 1
+        return url
+    except Exception as e:
+        print(f"Failed to get base url. URL=[ {url} ], error=[ {e} ]")
+        return url
 
 def get_site_name(url):
     """ -> PUBLIC -> Extract Base Site Name from URL <- """
@@ -25,6 +38,9 @@ def get_site_name(url):
 
 def remove_http(url):
     return url.replace("https://", "").replace("http://", "")
+
+if __name__ == '__main__':
+    print(get_base_url("https://www.cnet.co.kr/news/"))
 
 def extract_base_url(url: str):
     if Regex.contains_any(search_terms=["http://", "https://"], content=url):

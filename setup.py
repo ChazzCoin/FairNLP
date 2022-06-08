@@ -5,7 +5,7 @@ current = os.getcwd()
 
 setup(
     name='FairNLP',
-    version='1.3.1',
+    version='1.4.0',
     description='FairNLP (Natural Language Processing) Library.',
     url='https://github.com/chazzcoin/FAIR',
     author='ChazzCoin',
