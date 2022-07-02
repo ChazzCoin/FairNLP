@@ -20,9 +20,13 @@ def parse(data, parseAll=False, client=False) -> {}:
         json_obj["url"] = DICT.get_all_keys(data, keys("url"), force_type=True)
         json_obj["source_url"] = DICT.get_all_keys(data, keys("source_url"), force_type=True)
         json_obj["client"] = client
-        temp_date = DICT.get_all_keys(data, keys("published_date"))
-        json_obj["published_date"] = DATE.parse_obj_to_month_day_year_str(temp_date)
         json_obj["date_created"] = DATE.parse_obj_to_month_day_year_str(DATE.get_now_date_dt())
+        # Date Extraction Attempt (might be None/False)
+        published_date = DICT.get_all_keys(data, keys("published_date"))
+        if published_date:
+            json_obj["published_date"] = DATE.parse_obj_to_month_day_year_str(published_date)
+        else:
+            json_obj["published_date"] = DATE.parse_obj_to_month_day_year_str(DATE.get_now_date_dt())
         # + Article Core
         json_obj["description"] = DICT.get_all_keys(data, keys("description"), force_type=True)
         json_obj["img_url"] = DICT.get_all_keys(data, keys("imgUrl"), force_type=True)

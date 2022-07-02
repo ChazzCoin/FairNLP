@@ -1,3 +1,8 @@
+
+"""
+                Add Keys To Look For In JsonParser
+        -> JsonParser will use each value in the list to try and find a key/value.
+"""
 potential_keys = {
         "author": ["author", "authors", "screen_name", "user"],
         "title": ["title"],
