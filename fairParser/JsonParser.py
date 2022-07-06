@@ -2,6 +2,7 @@ from FSON import DICT
 from FDate import DATE
 from fairParser import Keys
 from FLog.LOGGER import Log
+from Core import Extractor
 
 Log = Log("FAIR.Parser.JsonParser")
 
@@ -9,7 +10,7 @@ Log = Log("FAIR.Parser.JsonParser")
 keys = Keys.keys
 
 
-def parse(data, parseAll=False, client=False) -> {}:
+def parse(data, parseAll=False, client=False, extractDate=False) -> {}:
     Log.d("Parsing data IN", v=f"=[ {data} ]")
     try:
         json_obj = {}
@@ -21,19 +22,32 @@ def parse(data, parseAll=False, client=False) -> {}:
         json_obj["source_url"] = DICT.get_all_keys(data, keys("source_url"), force_type=True)
         json_obj["client"] = client
         json_obj["date_created"] = DATE.parse_obj_to_month_day_year_str(DATE.get_now_date_dt())
+        json_obj["tags"] = DICT.get_all_keys(data, keys("tags"))
         # Date Extraction Attempt (might be None/False)
         published_date = DICT.get_all_keys(data, keys("published_date"))
+        # If Date
         if published_date:
             json_obj["published_date"] = DATE.parse_obj_to_month_day_year_str(published_date)
         else:
-            json_obj["published_date"] = DATE.parse_obj_to_month_day_year_str(DATE.get_now_date_dt())
+            # If no date, but extractDate setting is enabled.
+            if extractDate:
+                rawHTML = DICT.get("html", data, False)
+                extractedDate = Extractor.ExtractDateFromHTML(rawHTML)
+                if extractedDate:
+                    json_obj["published_date"] = extractedDate
+                else:
+                    json_obj["published_date"] = DATE.parse_obj_to_month_day_year_str(DATE.get_now_date_dt())
+            # No Date, plus no extractDate setting.
+            else:
+                json_obj["published_date"] = DATE.parse_obj_to_month_day_year_str(DATE.get_now_date_dt())
         # + Article Core
         json_obj["description"] = DICT.get_all_keys(data, keys("description"), force_type=True)
         json_obj["img_url"] = DICT.get_all_keys(data, keys("imgUrl"), force_type=True)
+        # json_obj["img_urls"] = DICT.get_all_keys(data, keys("imgUrl"), force_type=True)
         # enhanced -> Jarticle
         if parseAll:
             json_obj["tickers"] = DICT.get_all_keys(data, keys("tickers"))
-            json_obj["tags"] = DICT.get_all_keys(data, keys("tags"))
+            json_obj["keywords"] = DICT.get_all_keys(data, keys("keywords"))
             json_obj["summary"] = DICT.get("summary", data)
             json_obj["comments"] = DICT.get("comments", data)
             json_obj["source_rank"] = DICT.get("source_rank", data)
@@ -41,9 +55,6 @@ def parse(data, parseAll=False, client=False) -> {}:
             json_obj["sentiment"] = DICT.get("sentiment", data)
             json_obj["category_scores"] = DICT.get("category_scores", data)
             json_obj["score"] = DICT.get("score", data)
-            json_obj["title_score"] = DICT.get("title_score", data)
-            json_obj["description_score"] = DICT.get("description_score", data)
-            json_obj["body_score"] = DICT.get("body_score", data)
 
         Log.v(f"Parsing data OUT=[ {json_obj} ]")
         return json_obj

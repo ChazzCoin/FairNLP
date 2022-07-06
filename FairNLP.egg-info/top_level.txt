@@ -1,0 +1,5 @@
+fairCache
+fairConfig
+fairNLP
+fairParser
+fairResources

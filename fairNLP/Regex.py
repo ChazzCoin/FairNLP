@@ -22,15 +22,15 @@ def contains(search_term, content):
     try:
         if type(content) in [list, tuple]:
             for itemContent in content:
-                match = re.findall(fr'.*{search_term}.*', itemContent)
+                match = re.findall(fr'.*{str(search_term)}.*', itemContent)
                 if len(match) >= 1 and match is not None:
                     return True
             return False
         else:
-            match = re.findall(fr'.*{search_term}.*', content)
+            match = re.findall(fr'.*{str(search_term)}.*', content)
             return True if len(match) >= 1 and match is not None else False
     except Exception as e:
-        print(f"Failed to regex findall. {search_term}, error=[ {e} ]")
+        print(f"Failed to regex findall. {str(search_term)}, error=[ {e} ]")
         return False
 
 def contains_strict(search_term, content):
