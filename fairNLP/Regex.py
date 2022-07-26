@@ -1,9 +1,9 @@
 import re
 from FList import LIST
 from FDate import DATE
-import fairResources
+import FairResources
 
-STOPWORDS = fairResources.get_stopwords()
+STOPWORDS = FairResources.get_stopwords()
 
 """
 it claims, sentences.. -> r"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s"

@@ -17,6 +17,7 @@ from FList import LIST
 """
 
 def get_base_url(url):
+    """ -> PUBLIC -> Extract Base Site Name from URL <- """
     try:
         url = remove_http(url)
         last_index = 0
@@ -30,8 +31,9 @@ def get_base_url(url):
         print(f"Failed to get base url. URL=[ {url} ], error=[ {e} ]")
         return url
 
+# @DeprecationWarning
 def get_site_name(url):
-    """ -> PUBLIC -> Extract Base Site Name from URL <- """
+    """ -> DEPRECATED FOR BASE_URL -> Extract Base Site Name from URL <- """
     if verifyTwoPeriods(url):
         return extract_siteName_two_periods(url)
     return extract_siteName_one_period(url)
@@ -39,8 +41,7 @@ def get_site_name(url):
 def remove_http(url):
     return url.replace("https://", "").replace("http://", "")
 
-if __name__ == '__main__':
-    print(get_base_url("https://www.cnet.co.kr/news/"))
+
 
 def extract_base_url(url: str):
     if Regex.contains_any(search_terms=["http://", "https://"], content=url):
@@ -240,3 +241,8 @@ def filter_out_avoid_list(urls: [], avoid_list: []):
             continue
         filtered_urls.append(single_url)
     return filtered_urls
+
+
+if __name__ == '__main__':
+    test = get_site_name("https://www.cnet.co/news/")
+    print(test)
