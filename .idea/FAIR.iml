@@ -6,5 +6,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="FCoRE" />
     <orderEntry type="module" module-name="FairResources" />
+    <orderEntry type="module" module-name="FairArticle" />
   </component>
 </module>

@@ -1,5 +1,10 @@
 import random
+import re
+
+import FOS
+import FairResources
 from FList import LIST
+import FMath
 from FLog.LOGGER import Log
 
 Log = Log("FAIR.Language")
@@ -7,31 +12,126 @@ Log = Log("FAIR.Language")
 #
 # lemmatizer = WordNetLemmatizer()
 
+
+QUOTES_ENCODINGS = [b'\xe2\x80\x9e', b'\xe2\x80\x9f', b'\xe2\x80\x9d', b'\xe2\x80\x9c']
+
 """
     -> Tokenizing/Splitting Words from a String.
 """
 
+def is_capital(content: str):
+    firstChar = LIST.get(0, content, default=False)
+    if firstChar and str(firstChar).isupper():
+        return True
+    return False
+
+def are_capital(*content: str):
+    for item in content:
+        if not is_capital(item):
+            return False
+    return True
+
+def is_period(content:str):
+    if str(content) == ".":
+        return True
+    return False
+
+def are_periods_or_capitals(*content:str):
+    for item in content:
+        if is_capital(item) or is_period(item):
+            return True
+    return False
+
+def is_empty(content: str):
+    if not content or content == ' ' or content == '' or str(content) == " ":
+        return True
+    return False
+
+def are_empty(*content: str):
+    for item in content:
+        if not item or item == ' ' or item == '' or str(item) == " ":
+            return True
+    return False
+
+def is_quotation(content:str):
+    encoded_character = str(content).encode('utf-8')
+    if content == '"':
+        return True
+    elif encoded_character in QUOTES_ENCODINGS:
+        return True
+    return False
+
+def is_space(content:str):
+    if str(content) == ' ':
+        return True
+    return False
+
+"""
+"Hey there B.J. Jones!"
+"Hey there bj jones!"
+"""
 # This one is actually an extremely difficult issue to solve.
-def to_sentences(content: str):
-    """NOT WORKING!!!"""
+def to_sentences(content: str, combineQuotes=True):
+    """ALMOST WORKING!!!"""
     ENDERS = ['.', '?', '!']
     content = content.strip().replace("\n", " ").replace("  ", " ")
     current_index = 0
     start_index = 0
-    end_index = 0
+    quotation_count = 0
     sentences = []
-    for char in content:
-        if char in ENDERS and content[current_index + 1] == ' ':
-            plusTwoChar = str(content[current_index + 2])
-            if plusTwoChar.isupper():
-                sent = content[start_index:end_index]
-                start_index = current_index + 2
-                end_index = current_index
-                # we have a sentence! ..
-                # maybe, this could be a proper Noun
-                pass
+    for currentChar in content:
+        if current_index == len(content) - 1:
+            sent = content[start_index:current_index] + currentChar
+            sentences.append(sent)
+            break
+        fullTest = content[start_index:current_index+1]
+        print(fullTest)
+        plusOneChar = content[current_index + 1]
+
+        if is_quotation(currentChar):
+            quotation_count += 1
+
+        if currentChar in ENDERS:
+            if is_space(plusOneChar):
+                minusOneChar = str(content[current_index - 1])
+                minusTwoChar = str(content[current_index - 2])
+                minuxThreeChar = str(content[current_index - 3])
+                plusTwoChar = str(content[current_index + 2])
+                if is_capital(plusTwoChar) or is_quotation(plusTwoChar) and not are_periods_or_capitals(minusOneChar, minusTwoChar, minuxThreeChar):
+                    if are_empty(minusOneChar, minusTwoChar, minuxThreeChar):
+                        current_index += 1
+                        continue
+                    if combineQuotes and not FMath.is_even_number(quotation_count):
+                        current_index += 1
+                        continue
+                    sent = content[start_index:current_index] + currentChar
+                    start_index = current_index + 2
+                    sentences.append(sent)
+            elif is_quotation(plusOneChar):
+                current_index = current_index + 1
+                minusOneChar = str(content[current_index - 2])
+                minusTwoChar = str(content[current_index - 3])
+                minuxThreeChar = str(content[current_index - 4])
+                plusTwoChar = str(content[current_index + 2])
+                if is_capital(plusTwoChar) or is_quotation(plusTwoChar) and not are_periods_or_capitals(minusOneChar, minusTwoChar, minuxThreeChar):
+                    if are_empty(minusOneChar, minusTwoChar, minuxThreeChar):
+                        current_index += 1
+                        continue
+                    if combineQuotes and not FMath.is_even_number(quotation_count):
+                        current_index += 1
+                        continue
+                    sent = content[start_index:current_index] + '"'
+                    start_index = current_index + 2
+                    sentences.append(sent)
         current_index += 1
     return sentences
+
+if __name__ == '__main__':
+    contentList = FairResources.get_source("test_content")
+    content = LIST.get(0, contentList, default="")
+    print(content)
+    se = to_sentences(content)
+    print(se)
 
 def to_paragraphs(body: str) -> [str]:
     """ -> Separates text based on "\n" <- """
