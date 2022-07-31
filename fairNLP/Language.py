@@ -1,23 +1,56 @@
 import random
-import re
 
-import FOS
 import FairResources
+from Categories import Topics
 from FList import LIST
 import FMath
 from FLog.LOGGER import Log
 
 Log = Log("FAIR.Language")
-# from nltk import WordNetLemmatizer
-#
-# lemmatizer = WordNetLemmatizer()
 
+WEIGHTED_TERMS = Topics.ALL_CATEGORIES().get_all_weighted_terms()
 
+STOP_WORDS = FairResources.get_stopwords()
+
+SENTENCE_ENDERS = ['.', '?', '!']
 QUOTES_ENCODINGS = [b'\xe2\x80\x9e', b'\xe2\x80\x9f', b'\xe2\x80\x9d', b'\xe2\x80\x9c']
 
+ALPHABET_LOWER = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+                  "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+ALPHABET_UPPER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+                  "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+ALPHABET_ALL = ALPHABET_LOWER + ALPHABET_UPPER
+NUMBERS_SINGLE = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+
+SUMMARY = lambda first, middle, last: f"{first} {middle} {last}"
 """
     -> Tokenizing/Splitting Words from a String.
 """
+
+def is_in_alphabet_lower(content:str):
+    firstChar = LIST.get(0, content, default=False)
+    if firstChar in ALPHABET_LOWER:
+        return True
+    return False
+
+def is_in_alphabet_upper(content:str):
+    firstChar = LIST.get(0, content, default=False)
+    if firstChar in ALPHABET_UPPER:
+        return True
+    return False
+
+def is_in_alphabet(content:str):
+    firstChar = LIST.get(0, content, default=False)
+    if firstChar in ALPHABET_ALL:
+        return True
+    return False
+
+def is_single_number(content):
+    if type(content) != int:
+        content = LIST.get(0, content, default=False)
+    if content in NUMBERS_SINGLE:
+        return True
+    return False
 
 def is_capital(content: str):
     firstChar = LIST.get(0, content, default=False)
@@ -31,8 +64,15 @@ def are_capital(*content: str):
             return False
     return True
 
+def are_periods(*content: str):
+    for item in content:
+        if not is_period(item):
+            return False
+    return True
+
 def is_period(content:str):
-    if str(content) == ".":
+    firstChar = LIST.get(0, content, default=False)
+    if firstChar and str(content) == ".":
         return True
     return False
 
@@ -43,7 +83,8 @@ def are_periods_or_capitals(*content:str):
     return False
 
 def is_empty(content: str):
-    if not content or content == ' ' or content == '' or str(content) == " ":
+    firstChar = LIST.get(0, content, default=False)
+    if firstChar and not content or content == ' ' or content == '' or str(content) == " ":
         return True
     return False
 
@@ -62,76 +103,93 @@ def is_quotation(content:str):
     return False
 
 def is_space(content:str):
-    if str(content) == ' ':
+    firstChar = LIST.get(0, content, default=False)
+    if firstChar and str(content) == ' ':
         return True
     return False
 
+def is_space_or_quotation(content):
+    if is_quotation(content) or is_space(content):
+        return True
+    return False
+
+def __is_sentence_ender(content):
+    if str(content) in SENTENCE_ENDERS:
+        return True
+    return False
+
+def __is_sentence_beginner(content):
+    if is_in_alphabet(content):
+        return True
+    elif is_quotation(content):
+        return True
+    elif is_single_number(content):
+        return True
+    return False
+
+def __prepare_content_for_sentence_extraction(content):
+    return content.strip().replace("\n", " ").replace("  ", " ")
+
+
+def __compare(one, two):
+    listone, listtwo = [], []
+    for item1 in one:
+        if item1 in two:
+            continue
+        listone.append(item1)
+
+    for item2 in two:
+        if item2 in one:
+            continue
+        listtwo.append(item2)
+
+    return listone, listtwo
+
 """
-"Hey there B.J. Jones!"
-"Hey there bj jones!"
+-> if CurrentCharacter is '.'
+    - > if three previous characters are not periods
+    - > if first next character is a space
+    - > if second next character is a sentence beginner
 """
 # This one is actually an extremely difficult issue to solve.
 def to_sentences(content: str, combineQuotes=True):
-    """ALMOST WORKING!!!"""
-    ENDERS = ['.', '?', '!']
-    content = content.strip().replace("\n", " ").replace("  ", " ")
-    current_index = 0
-    start_index = 0
-    quotation_count = 0
-    sentences = []
+    """100%! WORKING!!!"""
+    content = __prepare_content_for_sentence_extraction(content)
+    current_index, start_index, quotation_count, sentences = 0, 0, 0, []
     for currentChar in content:
-        if current_index == len(content) - 1:
-            sent = content[start_index:current_index] + currentChar
+        if current_index >= len(content) - 3:
+            if FMath.is_even_number(quotation_count + 1):
+                sent = content[start_index:-1] + currentChar + '"'
+            else:
+                sent = content[start_index:-1] + currentChar
             sentences.append(sent)
             break
-        fullTest = content[start_index:current_index+1]
-        print(fullTest)
         plusOneChar = content[current_index + 1]
-
         if is_quotation(currentChar):
             quotation_count += 1
-
-        if currentChar in ENDERS:
-            if is_space(plusOneChar):
+        if __is_sentence_ender(currentChar):
+            if is_space(plusOneChar) or is_quotation(plusOneChar):
+                QM = False
+                if is_quotation(plusOneChar) and FMath.is_even_number(quotation_count+1):
+                    QM = True
                 minusOneChar = str(content[current_index - 1])
                 minusTwoChar = str(content[current_index - 2])
                 minuxThreeChar = str(content[current_index - 3])
                 plusTwoChar = str(content[current_index + 2])
-                if is_capital(plusTwoChar) or is_quotation(plusTwoChar) and not are_periods_or_capitals(minusOneChar, minusTwoChar, minuxThreeChar):
-                    if are_empty(minusOneChar, minusTwoChar, minuxThreeChar):
-                        current_index += 1
-                        continue
-                    if combineQuotes and not FMath.is_even_number(quotation_count):
-                        current_index += 1
-                        continue
-                    sent = content[start_index:current_index] + currentChar
-                    start_index = current_index + 2
-                    sentences.append(sent)
-            elif is_quotation(plusOneChar):
-                current_index = current_index + 1
-                minusOneChar = str(content[current_index - 2])
-                minusTwoChar = str(content[current_index - 3])
-                minuxThreeChar = str(content[current_index - 4])
-                plusTwoChar = str(content[current_index + 2])
-                if is_capital(plusTwoChar) or is_quotation(plusTwoChar) and not are_periods_or_capitals(minusOneChar, minusTwoChar, minuxThreeChar):
-                    if are_empty(minusOneChar, minusTwoChar, minuxThreeChar):
-                        current_index += 1
-                        continue
-                    if combineQuotes and not FMath.is_even_number(quotation_count):
-                        current_index += 1
-                        continue
-                    sent = content[start_index:current_index] + '"'
-                    start_index = current_index + 2
-                    sentences.append(sent)
+                plusThreeChar = str(content[current_index + 3])
+                # i + 1 -> Check if beginning of next sentencer is valid
+                if __is_sentence_beginner(plusTwoChar if not QM else plusThreeChar):
+                    # i + 2 -> Check if
+                    if is_space(plusOneChar if not QM else plusTwoChar):
+                        if not are_periods(minusOneChar, minusTwoChar, minuxThreeChar):
+                            if combineQuotes and not FMath.is_even_number(quotation_count if not QM else quotation_count + 1):
+                                current_index += 1
+                                continue
+                            sent = content[start_index:current_index] + currentChar if not QM else content[start_index:current_index] + f'{currentChar}"'
+                            start_index = current_index + 2
+                            sentences.append(sent)
         current_index += 1
     return sentences
-
-if __name__ == '__main__':
-    contentList = FairResources.get_source("test_content")
-    content = LIST.get(0, contentList, default="")
-    print(content)
-    se = to_sentences(content)
-    print(se)
 
 def to_paragraphs(body: str) -> [str]:
     """ -> Separates text based on "\n" <- """
@@ -262,24 +320,112 @@ def text_summarizer(content='', max_sents=5):
     final_summary = firstSentence + " " + form_summary(temp, max_sents)
     return final_summary
 
-if __name__ == '__main__':
-    text_summarizer("aoidjodfijoifajisdof", 5)
+# -> master summarizer!
+def summarize(content='', max_sents=5):
+    if not content or max_sents <= 0:
+        return []
+    keepList = []
+    # Pre. -> Convert raw string of text into a List of Sentences.
+    sentences = to_sentences(content)
+    if not sentences:
+        return False
+    # 1. -> If only 6 or less sentences to start, return now
+    if len(sentences) <= 6:
+        return combine_words(sentences)
+    # 2. -> Always use the first and last sentence
+    firstSentence = LIST.get(0, sentences, False)
+    if not firstSentence:
+        return False
+    lastIndex = len(keepList) - 1
+    lastSentence = LIST.get(lastIndex, sentences, False)
+    if len(lastSentence) <= 50:
+        lastSentence = LIST.get(lastIndex - 1, sentences, False)
+    # 3. -> Remove First and Last Sentence
+    without_first = LIST.remove_index(0, sentences)
+    without_first_and_last = without_first[:-1]
+    # 4. -> Filter out by length
+    for sen in without_first_and_last:
+        l = len(sen)
+        if 50 < l > 400:
+            continue
+        keepList.append(sen)
+    # 5. -> Section off list into three parts.
+    #           - Beginning, Middle, End.
+    base_count = int(len(keepList) / 3)
+    middle_count = base_count * 2
+    first = keepList[:base_count]
+    middle = keepList[base_count:middle_count]
+    last = keepList[middle_count:]
+    # 6. -> Score each Section
+    first_scored = Topics.ALL_CATEGORIES().score_categorizer(first)
+    middle_scored = Topics.ALL_CATEGORIES().score_categorizer(middle)
+    last_scored = Topics.ALL_CATEGORIES().score_categorizer(last)
+    # 7. -> Filter/Select highest scored sentences from each Section.
+    first_summary = form_summary(first_scored, 1)
+    middle_summary = form_summary(middle_scored, 1)
+    last_summary = form_summary(last_scored, 1)
+    # 8. -> Combine all 3 Sections into 1 Single Body of Text.
+    combined_summary = combine_words(first_summary, middle_summary, last_summary)
+    # 9. -> Combine the first sentence, the middle body and the last sentence to form "The_Summary"
+    The_Summary = SUMMARY(firstSentence, combined_summary, lastSentence)
+    return The_Summary
 
 def form_summary(scored_sentences: [], max_sent=5):
     final_list = []
     total_count = len(scored_sentences) - 1
-    current_count = 0
-    while current_count <= total_count:
-        if len(final_list) >= max_sent + 1:
+    current_index = 0
+    sorted_scored_sentences = sorted(scored_sentences, key=lambda lst: lst[0], reverse=True)
+    while current_index <= total_count:
+        if len(final_list) >= max_sent:
             break
-        random_sentence = random.choice(scored_sentences)
-        scored_sentences.remove(random_sentence)
-        sent = LIST.get(1, random_sentence)
+        raw_sent = LIST.get(current_index, sorted_scored_sentences)
+        sent = LIST.get(1, raw_sent)
+        # - Finish up
         final_list.append(sent)
-        current_count += 1
+        current_index += 1
     the_summary = combine_words(final_list)
     return the_summary
 
+def __split_words(text):
+    """ ALTERNATIVE: Split a string into array of words. """
+    try:
+        import re
+        text = re.sub(r'[^\w ]', '', text)  # strip special chars
+        return [x.strip('.').lower() for x in text.split()]
+    except TypeError:
+        return None
+
+def keywords(content):
+    """Get the top 10 keywords and their frequency scores ignores blacklisted
+    words in stopwords, counts the number of occurrences of each word, and
+    sorts them in reverse natural order (so descending) by number of
+    occurrences.
+    """
+    NUM_KEYWORDS = 10
+    content = __split_words(content)
+    # of words before removing blacklist words
+    if content:
+        num_words = len(content)
+        content = [x for x in content if x not in STOP_WORDS]
+        freq = {}
+        for word in content:
+            if word in freq:
+                freq[word] += 1
+            else:
+                freq[word] = 1
+
+        min_size = min(NUM_KEYWORDS, len(freq))
+        keywords = sorted(freq.items(),
+                          key=lambda x: (x[1], x[0]),
+                          reverse=True)
+        keywords = keywords[:min_size]
+        keywords = dict((x, y) for x, y in keywords)
+        for k in keywords:
+            articleScore = keywords[k] * 1.0 / max(num_words, 1)
+            keywords[k] = articleScore * 1.5 + 1
+        return dict(keywords)
+    else:
+        return dict()
 
 """
     -> FAIR UTILS
@@ -324,6 +470,7 @@ def remove_ing(word):
 def remove_apos(word):
     word = word.replace("'", "")
     return word
+
 
 HAPPY = {
     ":-)",
