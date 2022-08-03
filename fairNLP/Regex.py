@@ -83,7 +83,7 @@ def locate_term_in_str(term, content):
     return False
 
 def extract_only_capital_words_regex(content):
-    capital_words = re.findall('([A-Z][a-z]+)', content)
+    capital_words = re.findall(r'([A-Z][a-z]+)', content)
     return capital_words
 
 def extract_only_capital_words_manual(content):

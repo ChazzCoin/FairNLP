@@ -41,8 +41,6 @@ def get_site_name(url):
 def remove_http(url):
     return url.replace("https://", "").replace("http://", "")
 
-
-
 def extract_base_url(url: str):
     if Regex.contains_any(search_terms=["http://", "https://"], content=url):
         newUrl = url.replace("https://", "").replace("http://", "")
