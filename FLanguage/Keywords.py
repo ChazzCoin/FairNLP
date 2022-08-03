@@ -1,5 +1,5 @@
-import Words
-import Constants
+from . import Words
+from . import Constants
 
 def keywords(content):
     """Get the top 10 keywords and their frequency scores ignores blacklisted

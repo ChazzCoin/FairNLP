@@ -1,3 +1,4 @@
+import FUtils
 import FairResources
 # from Categories import Topics
 
@@ -454,7 +455,6 @@ def combine_words(*words):
         return temp_word.strip()
     return str(words).strip()
 
-# @Ext.safe_args
 def combine_args_str(*content: str) -> str:
     temp = ""
     content = LIST.flatten(content)

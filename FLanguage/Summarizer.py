@@ -1,7 +1,7 @@
 from Categories import Topics
 from FList import LIST
-import Sentences
-import Words
+from . import Sentences
+from . import Words
 from FLanguage import Constants
 
 # -> master summarizer!

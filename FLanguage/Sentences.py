@@ -7,9 +7,9 @@
     - > if second next character is a sentence beginner
 """
 # This one is actually an extremely difficult issue to solve.
-import Character
+from . import Character
 import FMath
-import Constants
+from . import Constants
 
 FORM_SENTENCE = lambda strContent, startIndex, endIndex, caboose: f"{strContent[startIndex:endIndex]}{caboose}"
 

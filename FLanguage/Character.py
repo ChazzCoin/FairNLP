@@ -1,4 +1,4 @@
-import Constants
+from . import Constants
 from FList import LIST
 
 def is_in_alphabet_lower(content:str):
