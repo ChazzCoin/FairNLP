@@ -1,5 +1,5 @@
 from . import Constants
-from FList import LIST
+from F import LIST
 
 def is_in_alphabet_lower(content:str):
     firstChar = LIST.get(0, content, default=False)

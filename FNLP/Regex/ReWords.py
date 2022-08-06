@@ -1,7 +1,6 @@
 import re
-from FLanguage.Constants import STOP_WORDS
-from FLanguage import Character
-
+from FNLP.Language.Constants import STOP_WORDS
+from FNLP.Language import Character
 
 
 def extract_only_capital_words_regex(content):

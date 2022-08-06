@@ -1,9 +1,10 @@
-import FUtils
+import F
 
-from FLanguage import Words
+from FNLP.Language import Words
+
 
 class Sentence:
-    id = FUtils.get_uuid()
+    id = F.get_uuid()
     rawText = ""
     orderNumber = None
     words = []

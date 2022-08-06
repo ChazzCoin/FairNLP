@@ -1,8 +1,8 @@
 import re
 
-from FList import LIST
+from F import LIST
 
-from FRegex import Constants
+from FNLP.Regex import Constants
 
 FINDALL = lambda regex, content: re.findall(regex, content)
 SEARCH = lambda regex, content: re.search(regex, content)
@@ -49,6 +49,12 @@ def contains_any(search_terms, content):
         temp = contains(term, content)
         if temp:
             return True
+    return False
+
+def locate_term_in_str(term, content):
+    match = re.search(fr'\b{term}\b', content)
+    if match:
+        return match
     return False
 
 

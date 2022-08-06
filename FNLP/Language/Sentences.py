@@ -8,7 +8,7 @@
 """
 # This one is actually an extremely difficult issue to solve.
 from . import Character
-import FMath
+from F import MATH
 from . import Constants
 
 FORM_SENTENCE = lambda strContent, startIndex, endIndex, caboose: f"{strContent[startIndex:endIndex]}{caboose}"
@@ -21,7 +21,7 @@ def to_sentences(content: str, combineQuotes=True):
     for currentChar in content:
         # -> Verify we have next (+3) characters.
         if current_index >= len(content) - 3:
-            if FMath.is_even_number(quotation_count + 1):
+            if MATH.is_even_number(quotation_count + 1):
                 sent = content[start_index:-1] + currentChar + '"'
             else:
                 sent = content[start_index:-1] + currentChar
@@ -37,7 +37,7 @@ def to_sentences(content: str, combineQuotes=True):
             if Character.is_space(plusOneChar) or Character.is_quotation(plusOneChar):
                 QM = False
                 # -> Verify next (+1) character is a quotation and are we "Quote Closed"
-                if Character.is_quotation(plusOneChar) and FMath.is_even_number(quotation_count + 1):
+                if Character.is_quotation(plusOneChar) and MATH.is_even_number(quotation_count + 1):
                     QM = True
                 plusTwoChar = str(content[current_index + 2])
                 plusThreeChar = str(content[current_index + 3])
@@ -50,7 +50,7 @@ def to_sentences(content: str, combineQuotes=True):
                         minuxThreeChar = str(content[current_index - 3])
                         # -> Verify previous three characters do not include a period
                         if not Character.are_periods(minusOneChar, minusTwoChar, minuxThreeChar):
-                            if combineQuotes and not FMath.is_even_number(quotation_count if not QM else quotation_count + 1):
+                            if combineQuotes and not MATH.is_even_number(quotation_count if not QM else quotation_count + 1):
                                 current_index += 1
                                 continue
                             # -> VERIFIED! Create sentence.

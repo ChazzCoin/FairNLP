@@ -1,6 +1,6 @@
-from FSON import DICT
+from F import DICT
 
-from Categories import Topics
+from FA.Categories import Topics
 import FairResources
 
 WEIGHTED_TERMS = Topics.ALL_CATEGORIES().get_all_weighted_terms()

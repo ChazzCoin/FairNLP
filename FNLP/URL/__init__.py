@@ -1,7 +1,7 @@
 import re
 import requests
-from fairNLP import Regex
-from FList import LIST
+from FNLP.Regex import Re as Regex
+from F import LIST
 
 """
     -> URL HANDLING

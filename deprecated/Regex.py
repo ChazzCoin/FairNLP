@@ -1,6 +1,6 @@
 import re
-from FList import LIST
-from FDate import DATE
+from F import LIST
+from F import DATE
 import FairResources
 
 STOPWORDS = FairResources.get_stopwords()

@@ -1,8 +1,8 @@
-from Categories import Topics
-from FList import LIST
+from FA.Categories import Topics
+from F import LIST
 from . import Sentences
 from . import Words
-from FLanguage import Constants
+from FNLP.Language import Constants
 
 # -> master summarizer!
 def summarize(content='', max_sents=5):

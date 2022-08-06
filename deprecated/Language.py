@@ -1,10 +1,10 @@
-import FUtils
+import F
 import FairResources
 # from Categories import Topics
 
-from FList import LIST
-import FMath
-from FLog.LOGGER import Log
+from F import LIST
+from F import MATH
+from F.LOG import Log
 
 Log = Log("FAIR.Language.DEPRECATED")
 
@@ -162,7 +162,7 @@ def to_sentences(content: str, combineQuotes=True):
     current_index, start_index, quotation_count, sentences = 0, 0, 0, []
     for currentChar in content:
         if current_index >= len(content) - 3:
-            if FMath.is_even_number(quotation_count + 1):
+            if MATH.is_even_number(quotation_count + 1):
                 sent = content[start_index:-1] + currentChar + '"'
             else:
                 sent = content[start_index:-1] + currentChar
@@ -174,7 +174,7 @@ def to_sentences(content: str, combineQuotes=True):
         if __is_sentence_ender(currentChar):
             if is_space(plusOneChar) or is_quotation(plusOneChar):
                 QM = False
-                if is_quotation(plusOneChar) and FMath.is_even_number(quotation_count+1):
+                if is_quotation(plusOneChar) and MATH.is_even_number(quotation_count+1):
                     QM = True
                 minusOneChar = str(content[current_index - 1])
                 minusTwoChar = str(content[current_index - 2])
@@ -186,7 +186,7 @@ def to_sentences(content: str, combineQuotes=True):
                     # i + 2 -> Check if
                     if is_space(plusOneChar if not QM else plusTwoChar):
                         if not are_periods(minusOneChar, minusTwoChar, minuxThreeChar):
-                            if combineQuotes and not FMath.is_even_number(quotation_count if not QM else quotation_count + 1):
+                            if combineQuotes and not MATH.is_even_number(quotation_count if not QM else quotation_count + 1):
                                 current_index += 1
                                 continue
                             sent = content[start_index:current_index] + currentChar if not QM else content[start_index:current_index] + f'{currentChar}"'

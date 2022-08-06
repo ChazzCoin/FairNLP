@@ -1,4 +1,4 @@
-from FList import LIST
+from F import LIST
 import Sentences
 import Words
 

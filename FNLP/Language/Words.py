@@ -1,6 +1,7 @@
-from FList import LIST
-from FLanguage import Utils, Character, Constants
-from fairNLP import Regex
+from F import LIST
+from FNLP.Language import Constants
+from FNLP.Language import Utils, Character
+from FNLP import Regex
 
 def find_proper_nouns(content:str):
     return Regex.extract_only_capital_words_regex(content)
