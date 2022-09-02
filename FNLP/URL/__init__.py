@@ -34,9 +34,12 @@ def get_base_url(url):
 # @DeprecationWarning
 def get_site_name(url):
     """ -> DEPRECATED FOR BASE_URL -> Extract Base Site Name from URL <- """
-    if verifyTwoPeriods(url):
-        return extract_siteName_two_periods(url)
-    return extract_siteName_one_period(url)
+    try:
+        if verifyTwoPeriods(url):
+            return extract_siteName_two_periods(url)
+        return extract_siteName_one_period(url)
+    except:
+        return False
 
 def remove_http(url):
     return url.replace("https://", "").replace("http://", "")
@@ -100,6 +103,8 @@ def verifyTwoPeriods(url: str):
 # -> get_site_name HELPER for urls with one period.
 def extract_siteName_one_period(url):
     """ PRIVATE """
+    if type(url) not in [str]:
+        return False
     i = 0
     slash_count = 0
     removal_index = 0
@@ -117,6 +122,8 @@ def extract_siteName_one_period(url):
 # -> get_site_name HELPER for urls with two periods.
 def extract_siteName_two_periods(url):
     """ PRIVATE """
+    if type(url) not in [str]:
+        return False
     temp = ""
     start = 0
     end = 0
