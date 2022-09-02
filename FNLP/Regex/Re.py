@@ -1,7 +1,6 @@
 import re
 
 from F import LIST
-
 from FNLP.Regex import Constants
 
 FINDALL = lambda regex, content: re.findall(regex, content)

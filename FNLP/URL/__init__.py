@@ -83,13 +83,18 @@ def extract_sub_reddit(url):
 # -> get_site_name HELPER for verifying URL has one or two periods.
 def verifyTwoPeriods(url: str):
     """ PRIVATE """
+    if type(url) not in [str]:
+        return False
     count = 0
-    for char in url:
-        if char == '.':
-            count += 1
-    if count >= 2:
-        return True
-    return False
+    try:
+        for char in url:
+            if char == '.':
+                count += 1
+        if count >= 2:
+            return True
+        return False
+    except:
+        return False
 
 
 # -> get_site_name HELPER for urls with one period.

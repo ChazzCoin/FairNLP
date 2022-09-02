@@ -1,6 +1,6 @@
 from F import LIST
-import Sentences
-import Words
+from FNLP.Language import Sentences
+from FNLP.Language import Words
 
 
 def tokenize_content_into_sentences(content):
