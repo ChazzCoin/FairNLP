@@ -1,4 +1,4 @@
-from . import Constants
+from FNLP.Language import Constants
 from F import LIST
 
 def is_in_alphabet_lower(content:str):
