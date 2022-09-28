@@ -1,10 +1,120 @@
-from F import LIST
-from FNLP.Language import Constants
-from FNLP.Language import Utils, Character
-from FNLP import Regex
+from F import LIST, DICT
+from FNLP.Language import Utils, Character, Constants
+from FNLP.Regex import ReWords
+
+
+
+""" 
+- input: Takes in two lists to match
+- output: ( Overall_Score, { matched_term: count } 
+"""
+def matcher(word_list: list, weighted_terms: list, score_variant=0.6) -> (int,{}):
+    # 2. -> Loop Each Category Weighted Term
+    temp_dict = {}  # { "weighted_term": "match_count" }
+    score = 0  # "weighted_term" Score * "match_count"
+    for w_term in weighted_terms:
+        # Stay Safe People
+        if not w_term or w_term == "" or w_term == " ":
+            continue
+        # -> Expand Weighted Term
+        # expanded_key_list = expand_word(w_term)
+        # 3. -> Loop All Tokens AND MATCH!!
+        for token in word_list:
+            # Stay Safe People
+            if not token or token == "" or token == " ":
+                continue
+            # MATCHER! -> if content word is in expanded weighted term list...
+            no_the_token = remove_the(token)
+            score_phrase = phrase_match_percentage(token, w_term)
+            score_no_the = phrase_match_percentage(no_the_token, w_term)
+            if score_phrase >= score_variant or score_no_the >= score_variant:
+            # if token == w_term or no_the_token == w_term:
+                # -> We have a match!
+                key_score = 1
+                score += key_score
+                temp_dict = DICT.add_matched_word_to_result(token, temp_dict)
+    # -> 4. Finish Up
+    return score, temp_dict  # ( score, { "weighted_term": "match_count", "weighted_term": "match_count" } )
+
+def matcher_with_expander(word_list: list, weighted_terms: list) -> (int,{}):
+    # 2. -> Loop Each Category Weighted Term
+    temp_dict = {}  # { "weighted_term": "match_count" }
+    score = 0  # "weighted_term" Score * "match_count"
+    for w_term in weighted_terms:
+        # Stay Safe People
+        if not w_term or w_term == "" or w_term == " ":
+            continue
+        # -> Expand Weighted Term
+        expanded_key_list = expand_word(w_term)
+        # 3. -> Loop All Tokens AND MATCH!!
+        for token in word_list:
+            # Stay Safe People
+            if not token or token == "" or token == " ":
+                continue
+            # MATCHER! -> if content word is in expanded weighted term list...
+            if is_match(token, expanded_key_list):
+                # -> We have a match!
+                key_score = 1
+                score += key_score
+                temp_dict = DICT.add_matched_word_to_result(w_term, temp_dict)
+    # -> 4. Finish Up
+    return score, temp_dict  # ( score, { "weighted_term": "match_count", "weighted_term": "match_count" } )
+
+def phrase_match_percentage(phrase_one, phrase_two):
+    pListOne = to_words_v1(phrase_one)
+    pListTwo = to_words_v1(phrase_two)
+    poneCount = len(pListOne)
+    ptwoCount = len(pListTwo)
+    if poneCount > ptwoCount:
+        highest = poneCount
+    else:
+        highest = ptwoCount
+    result = 0
+    for i in range(highest):
+        poneword = LIST.get(i, pListOne, False)
+        ptwoword = LIST.get(i, pListTwo, False)
+        if poneword == ptwoword:
+            result += 1
+    r = result / highest
+    return r
 
 def find_proper_nouns(content:str):
-    return Regex.extract_only_capital_words_regex(content)
+    raw = ReWords.extract_only_capital_words_regex(content)
+    proper_nouns = []
+    for word in raw:
+        if str(word).lower() in Constants.STOP_WORDS:
+            continue
+        proper_nouns.append(word)
+    return proper_nouns
+
+def find_proper_nouns_v2(content:str):
+    tokens = to_words_v1(content)
+    proper_nouns = []
+    temp = []
+    for word in tokens:
+        if is_capital(word):
+            if str(word).lower() in Constants.STOP_WORDS:
+                continue
+            temp.append(word)
+        else:
+            if temp:
+                proper_nouns.append(temp)
+                temp = []
+    return proper_nouns
+
+def is_match(word:str, word_list:list, ignoreCapitals=False):
+    if ignoreCapitals:
+        word = str(word).lower() # Make LowerCase
+        word_list = [str(item).lower() for item in word_list] # Make All Lowercase
+    if word in word_list:
+        return True
+    return False
+
+def is_capital(word:str):
+    firstChar = word[0]
+    if str(firstChar).isupper():
+        return True
+    return False
 
 def make_capital(word:str):
     firstChar = word[0]
@@ -99,6 +209,13 @@ def remove_apos(word):
     word = word.replace("'", "")
     return word
 
+def remove_the(word:str):
+    word = word.strip()
+    if word.startswith("the") or word.startswith("The"):
+        word = word.replace("the", "").replace("The", "")
+        return word.strip()
+    return word
+
 def __split_words(text):
     """ ALTERNATIVE: Split a string into array of words. """
     try:
@@ -107,3 +224,9 @@ def __split_words(text):
         return [x.strip('.').lower() for x in text.split()]
     except TypeError:
         return None
+
+
+if __name__ == '__main__':
+    wordOne = "Sandbox development"
+    wordTwo = "The Sandbox"
+    print(phrase_match_percentage(wordOne, wordTwo))
