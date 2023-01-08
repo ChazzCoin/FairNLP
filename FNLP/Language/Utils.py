@@ -1,4 +1,10 @@
 from F import LIST
+import re
+
+def remove_special_characters(text):
+    """ DEPRECATED """
+    newText = re.sub('[^a-zA-Z0-9]', ' ', text)
+    return newText
 
 def remove_empty_strings(list_of_strs: []):
     newS = []

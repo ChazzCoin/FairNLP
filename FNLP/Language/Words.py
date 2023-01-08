@@ -157,6 +157,11 @@ def to_words_v1(content: str):
     newS = Utils.remove_empty_strings(s)
     return newS
 
+def to_words_v2(content: str):
+    content = Utils.remove_special_characters(content)
+    s = content.split(" ")
+    newS = Utils.remove_empty_strings(s)
+    return newS
 def to_bi_grams_v2(tokens):
     """ PUBLIC HELPER """
     return to_x_grams(tokens, 2)
@@ -198,6 +203,18 @@ def combine_words(*words):
         return temp_word.strip()
     return str(words).strip()
 
+def is_word(word:str) -> bool:
+    for char in word:
+        if not Character.is_in_alphabet(char):
+            return False
+    return True
+
+def is_potentially_a_word(word:str) -> bool:
+    r = False
+    for char in word:
+        if Character.is_in_alphabet(char):
+            r = True
+    return r
 def remove_ing(word):
     if word.endswith("ing"):
         return word[:-3]
