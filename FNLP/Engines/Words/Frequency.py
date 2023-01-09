@@ -39,7 +39,7 @@ def score_words(words: list) -> dict:
     return result
 
 # -> Takes word count dicts and add the values into one count.
-def combine_add_word_frequency_counts(*dicts) -> dict:
+def add_word_frequency_counts(*dicts) -> dict:
     """ Add two dicts of word counts together """
     result = {}
     # -> Loop each dictionary

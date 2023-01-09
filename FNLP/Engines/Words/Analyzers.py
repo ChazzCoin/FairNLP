@@ -2,9 +2,10 @@ from F import LIST, DICT
 from F.LOG import Log
 from FNLP.Engines.Words.Frequency import get_frequency_count_of_words
 from FNLP.Language import Words, Constants
+from FNLP.Models.Variables import WordsVariables
 
 
-def analyze_content(tokens, top_words_count=500):
+def words_analyzer(tokens, returnJson=True):
     word_count = len(tokens)
     # -> Filter Out The Crap + Stop Words
     # -> Add Dictionary Check to see if its a word.
@@ -20,11 +21,18 @@ def analyze_content(tokens, top_words_count=500):
         no_stop_words.append(word)
     # -> Finish Up
     unique_words = LIST.remove_duplicates(unique_words)
-    scores = get_frequency_count_of_words(tokens)
-    stop_scores = get_frequency_count_of_words(no_stop_words)
-    stop_scores = DICT.order_by_value(stop_scores)
-    top_x_words = _top_x(stop_scores, top_words_count)
-    return { "words_counted": word_count, "unique_words": unique_words, "scores": scores, "stop_scores": stop_scores, "top_x_words": top_x_words }
+    counts = get_frequency_count_of_words(tokens)
+    stop_counts = get_frequency_count_of_words(no_stop_words)
+    stop_counts = DICT.order_by_value(stop_counts)
+    # top_x_words = _top_x(stop_counts, top_words_count)
+    wam = WordsVariables()
+    wam.unique_words = unique_words
+    wam.counts = DICT.order_by_value(counts)
+    wam.unique_words_count = len(unique_words)
+    wam.stop_counts = DICT.order_by_value(stop_counts)
+    # wam.top_x_words = top_x_words
+    wam.words_counted = word_count
+    return wam
 
 def _top_x(objs:dict, x:int=20):
     top_objs = []
