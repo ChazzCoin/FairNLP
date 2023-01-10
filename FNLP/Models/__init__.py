@@ -4,6 +4,17 @@ from FNLP.Engines import Merge
 
 
 class BaseModel(FairClass):
+    input_models = []
+    webpage_models = []
+
+    def add_input_models(self, input_models:list):
+        self.input_models = input_models
+
+    def get_content(self, model):
+        return self.get_dict("content", model, None)
+
+    def get_date(self, model):
+        return self.get_dict("date", model, None)
 
     def absorb_content_model(self, model):
         cm = model

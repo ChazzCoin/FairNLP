@@ -27,7 +27,7 @@ def add_word_counts(scores_one:dict, scores_two:dict) -> dict:
 
     """ Part 2. Merging with Brain... """
     if scores_one_list:
-        for scores_one_word in Log.ProgressBarYielder(scores_one, "Calculating brain counts..."):
+        for scores_one_word in scores_one:
             scores_one_count = DICT.get(scores_one_word, scores_one, None)
             if scores_two.__contains__(scores_one_word):
                 scores_two_count = DICT.get(scores_one_word, scores_two, None)
@@ -38,7 +38,7 @@ def add_word_counts(scores_one:dict, scores_two:dict) -> dict:
 
     """ Part 3. If new words, add them to brain... """
     if new_words:
-        for new_word in Log.ProgressBarYielder(new_words, "Adding new words to brain..."):
+        for new_word in new_words:
             result[new_word] = scores_two[new_word]
 
     return result

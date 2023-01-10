@@ -1,6 +1,7 @@
+from F.LOG import Log
 from FNLP.Language import Paragraphs
 from FNLP.Models import BaseModel
-from FNLP.Models.Variables import ParagraphVariables
+from FNLP.Models.Variables import ParagraphsVariables
 
 """
 word = name of word
@@ -9,7 +10,7 @@ score = algo for giving a word a score (seen,
 
 """
 
-class ParagraphsModel(BaseModel, ParagraphVariables):
+class ParagraphsModel(BaseModel, ParagraphsVariables):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -18,13 +19,12 @@ class ParagraphsModel(BaseModel, ParagraphVariables):
         self.paragraphs = Paragraphs.to_paragraphs(self.input_p_content)
         self.paragraph_count = len(self.paragraphs)
 
-    def import_model(self, model: dict):
-        """ Load JSON Model """
-        self.fromJson(model)
+    def analyze_dates(self):
+        for model in Log.ProgressBarYielder(self.input_models, prefix="Analyzing Words by Date..."):
+            self.analyze_date(model)
 
-    def export_model(self):
-        """ Export Model as JSON"""
-        return self.toJson(removeNone=True)
-
-    def print_model(self):
-        print(self.toJson())
+    def analyze_date(self, model):
+        content = self.get_content(model)
+        date = self.get_date(model)
+        self.paragraphs = Paragraphs.to_paragraphs(content)
+        self.paragraph_count = len(self.paragraphs)

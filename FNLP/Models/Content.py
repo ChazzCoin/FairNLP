@@ -6,22 +6,25 @@ from FNLP.Language import Words
 from F import DATE, CONVERT, DICT, LIST
 from FNLP.Models import BaseModel
 from FNLP.Models.Paragraphs import ParagraphsModel
-from FNLP.Models.Sentences import SentencesModel
+from FNLP.Models.Sentences import SentencesEngine
 from FNLP.Models.Variables import ContentVariables, BaseVariables
-from FNLP.Models.Words import WordsModel
+from FNLP.Models.Words import WordsEngine
 Log = Log("ContentModel")
 
-
-class ContentModel(BaseModel, BaseVariables, ContentVariables):
+CONTENT = lambda content, date: {"content": content, "date": date}
+class ContentManager(BaseModel, BaseVariables, ContentVariables):
     """ VARIABLES ARE IN 'CONTENTVARIABLES' UNDER VARIABLES MODEL """
 
     def run_analyzer(self):
-        self.model_words = WordsModel(input_content=self.input_contents)
-        self.model_words.run_analyzer()
-        self.model_sentences = SentencesModel(input_s_raw=self.input_main_content_only)
-        self.model_sentences.run_analyzer()
+        self.model_words = WordsEngine(input_models=self.input_models)
+        self.model_words.analyze_dates()
+        self.model_sentences = SentencesEngine(input_models=self.input_models)
+        self.model_sentences.analyze_dates()
         # self.model_paragraphs = ParagraphsModel(input_p_content=self.input_contents).run_analyzer()
         # self.model_paragraphs.run_analyzer()
+
+    def prepare_content(self):
+        pass
 
     def add_webpages(self, webpages:list):
         for ac in Log.ProgressBarYielder(webpages, prefix="Preparing Content..."):
@@ -32,13 +35,7 @@ class ContentModel(BaseModel, BaseVariables, ContentVariables):
         id = DICT.get("_id", webpage, default="Unknown")
         new_date = DICT.get("pub_date", webpage, None)
         model = { "_id": O.TO_OBJECT_ID(id), "webpage_date": new_date, "updatedDate": TODAY }
-        self._webpage_models.append(model)
-        # Extract Values only from Dict/Obj
-        new_content = CONVERT.dict_TO_List_OF_Values(webpage)
-        self.input_contents.append(new_content)
-        # Create and Add Tokens
-        new_tokens = Words.to_words_v2(str(new_content))
-        self.input_tokens_by_content.append(new_tokens)
+        self.webpage_models.append(model)
         # Add Date
         if new_date:
             self._dates_analyzed.append(new_date)
@@ -46,13 +43,24 @@ class ContentModel(BaseModel, BaseVariables, ContentVariables):
         # cat_scores = DICT.get("category_scores", webpage, None)
         # if cat_scores:
         #     self.category_scores = DICT.add_word_count(self.category_scores, cat_scores)
-        title = DICT.get("title", webpage, "")
-        body = DICT.get("body", webpage, "")
-        self.input_main_content_only = self.input_main_content_only + " " + str(title) + " " + str(body)
+        self.extract_content(webpage)
         self.post_add_webpage_work()
 
+    def extract_content(self, webpage):
+        title = DICT.get("title", webpage, "")
+        body = DICT.get("body", webpage, None)
+        new_date = DICT.get("pub_date", webpage, None)
+        if body:
+            main_content = str(title) + " " + str(body)
+            main_content_model = CONTENT(main_content, new_date)
+            self.input_models.append(main_content_model)
+        else:
+            new_content = CONVERT.dict_TO_List_OF_Values(webpage)
+            main_content_model = CONTENT(new_content, "Unknown")
+            self.input_models.append(main_content_model)
+
     def post_add_webpage_work(self):
-        self.input_tokens = LIST.flatten(self.input_tokens_by_content)
+        # self.input_tokens = LIST.flatten(self.input_tokens_by_content)
         self._dates_analyzed = LIST.remove_duplicates(self._dates_analyzed)
         self._dates_analyzed_count = len(self._dates_analyzed)
         self._webpages_analyzed_count = len(self.input_contents)

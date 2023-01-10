@@ -162,6 +162,32 @@ def to_words_v2(content: str):
     s = content.split(" ")
     newS = Utils.remove_empty_strings(s)
     return newS
+
+def to_words_v3(content: str, removeStopWords=False):
+    content = Utils.remove_special_characters(content)
+    s = content.split(" ")
+    newS = Utils.remove_empty_strings(s)
+    if removeStopWords:
+        noStopNewS = []
+        for item in newS:
+            if item in Constants.STOP_WORDS:
+                continue
+            noStopNewS.append(item)
+        return noStopNewS
+    else:
+        return newS
+
+def to_words_v3_include_stop_list(content: str):
+    content = Utils.remove_special_characters(content)
+    s = content.split(" ")
+    newS = Utils.remove_empty_strings(s)
+    noStopNewS = []
+    for item in newS:
+        if item in Constants.STOP_WORDS:
+            continue
+        noStopNewS.append(item)
+    return newS, noStopNewS
+
 def to_bi_grams_v2(tokens):
     """ PUBLIC HELPER """
     return to_x_grams(tokens, 2)

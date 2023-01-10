@@ -3,9 +3,6 @@ import datetime
 from F.DATE import TODAY
 
 class BaseVariables:
-    # Internal Only
-    _webpage_models = []
-    # Main
     _createdDate: datetime = None
     _updatedDate: datetime = TODAY
     _dates_analyzed_count: int = 0
@@ -21,36 +18,35 @@ class WordVariables:
     isFirstCapital: bool = False
 
 class WordsVariables:
-    input_w_content = []
-    input_w_tokens = []
-    # Analyzer
-    words_counted: int = 0
+    # Date
+    overall_words_by_date = {}
+    stop_words_by_date = {}
+    # Overall
+    overall_counts: dict = {}
+    overall_words_counted: int = 0
+    # Unique
     unique_words: list = []
-    unique_words_count: int = 0
-    counts: dict = {}
-    stop_counts: dict = {}
-    top_x_words: dict = {}
+    unique_words_counted: int = 0
+    # No Stop Words
+    overall_stop_counts: dict = {}
 
 class ContentVariables:
     # Main
     input_contents: list = []
-    input_tokens: list = []
-    input_tokens_by_content: list = []
+    input_contents_by_date: dict = {}
     input_main_content_only: str = ""
+    input_main_content_models: list = []
     # Models
     model_words = None
     model_sentences = None
     model_paragraphs = None
 
+class ParagraphsVariables:
+    overall_paragraphs: list = []
+    overall_paragraphs_counted: int = 0
+    paragraphs_by_date: dict = {}
 
-class ParagraphVariables:
-    input_p_content = None
-    paragraphs: list = []
-    paragraph_count: int = 0
-
-class SentenceVariables:
-    input_s_raw = None
-    input_s_content = ""
-    sentences: list = []
-    sentence_count: int = 0
-
+class SentencesVariables:
+    overall_sentences: list = []
+    overall_sentences_counted: int = 0
+    sentences_by_date: dict = {}
