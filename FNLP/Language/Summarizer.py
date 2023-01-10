@@ -5,6 +5,7 @@ from . import Words
 from FNLP.Language import Constants
 
 # -> master summarizer!
+"""Move to Engines"""
 def summarize(content='', max_sents=5):
     if not content or max_sents <= 0:
         return []

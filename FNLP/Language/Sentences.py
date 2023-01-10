@@ -13,6 +13,7 @@ from FNLP.Language import Constants
 
 FORM_SENTENCE = lambda strContent, startIndex, endIndex, caboose: f"{strContent[startIndex:endIndex]}{caboose}"
 
+"""Move to Engines"""
 def to_sentences(content: str, combineQuotes=True):
     """100%! WORKING!!!"""
     content = __prepare_content_for_sentence_extraction(content)

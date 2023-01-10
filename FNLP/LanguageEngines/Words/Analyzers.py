@@ -1,7 +1,7 @@
 from F import LIST, DICT
-from FNLP.Engines.Words.Frequency import get_frequency_count_of_words
+from FNLP.LanguageEngines.Words.Frequency import get_frequency_count_of_words
 from FNLP.Language import Words, Constants
-from FNLP.Models.Variables import WordsVariables
+from FNLP.LanguageStructure.Variables import WordsVariables
 
 
 def words_analyzer(tokens):

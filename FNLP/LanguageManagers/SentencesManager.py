@@ -2,11 +2,11 @@ from F import LIST
 
 from F.LOG import Log
 from FNLP.Language import Sentences
-from FNLP.Models import BaseModel
-from FNLP.Models.Variables import SentencesVariables
+from FNLP.LanguageEngines import BaseModel
+from FNLP.LanguageStructure.Variables import SentencesVariables
 
 
-class SentencesEngine(BaseModel, SentencesVariables):
+class SentencesManager(BaseModel, SentencesVariables):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

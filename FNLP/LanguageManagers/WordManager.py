@@ -1,9 +1,8 @@
 from F.CLASS import FairClass
-from FNLP.Engines.Words import Analyzers
-from FNLP.Models.Variables import WordVariables
+from FNLP.LanguageEngines.Words import Analyzers
+from FNLP.LanguageStructure.Variables import WordVariables
 
-
-class WordModel(FairClass, WordVariables):
+class WordManager(FairClass, WordVariables):
 
     def __init__(self, word, **kwargs):
         super().__init__(**kwargs)

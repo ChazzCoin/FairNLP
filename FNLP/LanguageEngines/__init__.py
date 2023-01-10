@@ -1,6 +1,6 @@
 from F import LIST
 from F.CLASS import FairClass
-from FNLP.Engines import Merge
+from FNLP import Merge
 
 
 class BaseModel(FairClass):

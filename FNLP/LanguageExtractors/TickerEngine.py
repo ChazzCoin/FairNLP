@@ -7,14 +7,14 @@ import FairResources
 from F.LOG import Log
 from F import DICT
 
-from FCM.Jarticle.jCompany import jCompany
-from FCM.Jarticle.jCryptocurrencies import jCryptocurrencies
-jc = jCompany()
-jcrypto = jCryptocurrencies()
+# from FCM.Jarticle.jCompany import jCompany
+# from FCM.Jarticle.jCryptocurrencies import jCryptocurrencies
+# jc = jCompany()
+# jcrypto = jCryptocurrencies()
 
 Log = Log("Jarticle.Engine.Sozin")
-STOCK_TICKERS = jc.get_list_of_all_tickers()
-CRYPTO_TICKERS = jcrypto.get_list_of_all_tickers()
+STOCK_TICKERS = FairResources.get_stock_tickers()
+CRYPTO_TICKERS = []
 STOP_WORDS = FairResources.get_stopwords()
 
 def extract_all(content):
@@ -110,7 +110,7 @@ def extract_company_names(content, returnTickers=True):
 def run_company_matcher_v1(potential_company):
     # 2. -> Loop Each Category Weighted Term
     temp_list2 = []
-    all_companies = jc.get_list_of_all_companies()
+    all_companies = FairResources.get_company_names_from_csv()
     tokenized_content = Tokenizer.complete_tokenization_v2(potential_company, toList=True)
     for company in all_companies:
         name = DICT.get("name", company)
@@ -128,7 +128,7 @@ def run_company_matcher_v1(potential_company):
 def run_company_matcher_v2(potential_companies):
     # 2. -> Loop Each Category Weighted Term
     temp_dict = {}
-    all_companies = jc.get_list_of_all_companies()
+    all_companies = FairResources.get_company_names_from_csv()
     for company in all_companies:
         name = DICT.get("name", company)
         for pc in potential_companies:

@@ -5,14 +5,14 @@ current = os.getcwd()
 
 setup(
     name='FairNLP',
-    version='4.1.0',
+    version='5.0.0',
     description='FairNLP (Natural Language Processing) Library.',
     url='https://github.com/chazzcoin/FAIR',
     author='ChazzCoin',
     author_email='chazzcoin@gmail.com',
     license='BSD 2-clause',
     packages=find_packages(),
-    install_requires=['FairCore>=1.0.0'],
+    install_requires=['FairCore>=5.0.0'],
     package_data={
         'fairResources': ['*.txt']
     },

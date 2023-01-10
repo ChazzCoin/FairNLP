@@ -1,7 +1,7 @@
 from F.LOG import Log
 from FNLP.Language import Paragraphs
-from FNLP.Models import BaseModel
-from FNLP.Models.Variables import ParagraphsVariables
+from FNLP.LanguageEngines import BaseModel
+from FNLP.LanguageStructure.Variables import ParagraphsVariables
 
 """
 word = name of word
@@ -10,7 +10,7 @@ score = algo for giving a word a score (seen,
 
 """
 
-class ParagraphsModel(BaseModel, ParagraphsVariables):
+class ParagraphsManager(BaseModel, ParagraphsVariables):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

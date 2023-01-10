@@ -2,13 +2,13 @@ import F.LIST
 from F import LIST
 from F.LOG import Log
 
-from FNLP.Engines import Merge
+from FNLP import Merge
 from FNLP.Language import Words
-from FNLP.Engines.Words import Analyzers
-from FNLP.Models import BaseModel
-from FNLP.Models.Variables import WordsVariables
+from FNLP.LanguageEngines.Words import Analyzers
+from FNLP.LanguageEngines import BaseModel
+from FNLP.LanguageStructure.Variables import WordsVariables
 
-class WordsEngine(BaseModel, WordsVariables):
+class WordsManager(BaseModel, WordsVariables):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
