@@ -1,6 +1,8 @@
 import datetime
 
 from F.DATE import TODAY
+from FNLP.LanguageEngines import BaseModel
+
 
 class BaseVariables:
     _createdDate: datetime = None
@@ -17,7 +19,7 @@ class WordVariables:
     letter_count: int = None
     isFirstCapital: bool = False
 
-class WordsVariables:
+class WordsVariables(BaseModel):
     # Date
     overall_words_by_date = {}
     stop_words_by_date = {}

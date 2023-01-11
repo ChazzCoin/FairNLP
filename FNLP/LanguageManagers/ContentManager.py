@@ -12,7 +12,7 @@ CONTENT = lambda content, date: {"content": content, "date": date}
 class ContentManager(BaseModel, BaseVariables, ContentVariables):
     """ VARIABLES ARE IN 'CONTENTVARIABLES' UNDER VARIABLES MODEL """
 
-    def run_analyzer(self):
+    def run_content_analyzer(self):
         self.model_words = WordsManager.WordsManager(input_models=self.input_models)
         self.model_words.analyze_dates()
         self.model_sentences = SentencesManager.SentencesManager(input_models=self.input_models)

@@ -8,7 +8,7 @@ from FNLP.LanguageEngines.Words import Analyzers
 from FNLP.LanguageEngines import BaseModel
 from FNLP.LanguageStructure.Variables import WordsVariables
 
-class WordsManager(BaseModel, WordsVariables):
+class WordsManager(WordsVariables):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -37,9 +37,11 @@ class WordsManager(BaseModel, WordsVariables):
         self.overall_counts = Merge.add_word_counts(temp_count, self.overall_counts)
         self.overall_stop_counts = Merge.add_word_counts(temp_stop_count, self.overall_stop_counts)
         # Model
+        # saving 'wam'
+        """something is wrong with the inputs by date"""
         if self.overall_words_by_date.__contains__(date):
-            temp_obj: list = self.overall_words_by_date[date]
-            temp_obj.append(wam)
+            temp_obj: WordsManager = self.overall_words_by_date[date]
+            temp_obj.absorb_model(wam)
             self.overall_words_by_date[date] = temp_obj
         else:
-            self.overall_words_by_date[date] = [wam]
+            self.overall_words_by_date[date] = wam
