@@ -1,7 +1,7 @@
 from F import DICT
 
 # from FA.Categories import Topics
-import FairResources
+from FairResources import FairResources
 
 # WEIGHTED_TERMS = Topics.ALL_CATEGORIES().get_all_weighted_terms()
 

@@ -7,6 +7,14 @@ from FNLP.LanguageStructure.Variables import SentencesVariables
 
 
 class SentencesManager(BaseModel, SentencesVariables):
+    """
+    -> Organizes sentences analyzed by Date of webpage/content.
+        sentences_by_date: dict         = { "datetime": [sentenceOne, sentenceTwo], "datetime": [sentenceOne, sentenceTwo] }
+
+    -> Raw overall memory of sentences and how many were counted.
+        overall_sentences: list         = [ "sentence1", "sentence2" ]
+        overall_sentences_counted: int  = 2
+    """
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

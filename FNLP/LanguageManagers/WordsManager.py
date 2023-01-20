@@ -5,10 +5,23 @@ from F.LOG import Log
 from FNLP import Merge
 from FNLP.Language import Words
 from FNLP.LanguageEngines.Words import Analyzers
-from FNLP.LanguageEngines import BaseModel
 from FNLP.LanguageStructure.Variables import WordsVariables
 
 class WordsManager(WordsVariables):
+    """
+    -> Organizes words analyzed by Date of webpage/content.
+        overall_words_by_date       = { "_id": datetime, "word_counts": { "ALL_WORDS": count }, "words_counted": XX }
+        stop_words_by_date          = { "_id": datetime, "word_counts": { "FILTERED_WORDS": count }, "words_counted": XX }
+
+    -> Raw overall memory of words and how many times we've counted that word.
+        overall_counts: dict        = { "ALL_WORDS": count }
+        overall_words_counted: int  = 0
+        overall_stop_counts: dict   = { "FILTERED_WORDS": count }
+
+    -> Organizing Unique words looked at/counted.
+        unique_words: list          = ["word1", "word2] -> No duplicate words.
+        unique_words_counted: int   = XX -> Count of unique words.
+    """
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -16,6 +29,7 @@ class WordsManager(WordsVariables):
     def analyze_dates(self):
         for model in Log.ProgressBarYielder(self.input_models, prefix="Analyzing Words by Date..."):
             self.analyze_date(model)
+
     def analyze_date(self, model):
         content = self.get_content(model)
         date = self.get_date(model)
@@ -37,8 +51,6 @@ class WordsManager(WordsVariables):
         self.overall_counts = Merge.add_word_counts(temp_count, self.overall_counts)
         self.overall_stop_counts = Merge.add_word_counts(temp_stop_count, self.overall_stop_counts)
         # Model
-        # saving 'wam'
-        """something is wrong with the inputs by date"""
         if self.overall_words_by_date.__contains__(date):
             temp_obj: WordsManager = self.overall_words_by_date[date]
             temp_obj.absorb_model(wam)

@@ -13,12 +13,23 @@ class ContentManager(BaseModel, BaseVariables, ContentVariables):
     """ VARIABLES ARE IN 'CONTENTVARIABLES' UNDER VARIABLES MODEL """
 
     def run_content_analyzer(self):
+        self._run_word_manager()
+        self._run_sentence_manager()
+
+    """ Analyzes and Breaks down Words! """
+    def _run_word_manager(self):
         self.model_words = WordsManager.WordsManager(input_models=self.input_models)
         self.model_words.analyze_dates()
+
+    """ Analyzes and Breaks down Sentences! """
+    def _run_sentence_manager(self):
         self.model_sentences = SentencesManager.SentencesManager(input_models=self.input_models)
         self.model_sentences.analyze_dates()
-        # self.model_paragraphs = ParagraphsModel(input_p_content=self.input_contents).run_analyzer()
-        # self.model_paragraphs.run_analyzer()
+
+    """ Analyzes and Breaks down Paragraphs! """
+    # def _run_paragraph_manager(self):
+    #     self.model_paragraphs = ParagraphsModel(input_p_content=self.input_contents).run_analyzer()
+    #     self.model_paragraphs.run_analyzer()
 
     def add_webpages(self, webpages:list):
         for ac in Log.ProgressBarYielder(webpages, prefix="Preparing Content..."):
